@@ -38,7 +38,7 @@ def _check_postal_code(code):
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s - %(message)s',
-                        encoding='utf-8', level=logging.DEBUG)
+                        encoding='utf-8', level=logging.INFO)
 
     client = pymongo.MongoClient(_get_uri())
     db = client.raw
@@ -47,11 +47,11 @@ if __name__ == '__main__':
     end = int(os.environ.get('END', 1000000))
     logging.info('start=%s, end=%s', start, end)
 
-    for i in range(start, end):
+    for i in tqdm(range(start, end)):
         postal_code = '{:06d}'.format(i)
-        logging.info('query=%s', postal_code)
+        logging.debug('query=%s', postal_code)
 
         response = _check_postal_code(postal_code)
         res = db.codes.insert_one(response)
-        logging.info('inserted_id=%s', res.inserted_id)
+        logging.debug('inserted_id=%s', res.inserted_id)
         sleep(0.1)
