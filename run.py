@@ -1,9 +1,9 @@
 import logging
 import os
-from time import sleep
-
 import pymongo
 import requests
+from time import sleep
+from tqdm import tqdm
 
 URL = 'https://developers.onemap.sg/commonapi/search'
 
