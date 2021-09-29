@@ -1,6 +1,8 @@
-# SGP Postal Code Database
+# SGP Postal Code Crawler
 
-Collecting postal code to address mapping from OneMap
+Retrieve and store postal code to address mapping from OneMap.
+The data will be collected in a hosted [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+For users who want to get a complete download of the data, please refer to [the main repo](https://github.com/OpenSingaporePostalCode/OpenSingaporePostalCode).
 
 ## Run
 
