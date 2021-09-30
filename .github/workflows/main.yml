@@ -1,0 +1,30 @@
+name: Update database
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron:  '1 * * * *'
+  workflow_dispatch:
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Retrieve
+        run: |
+          python run.py
+        env:
+          MONGODB_HOST: ${{ secrets.MONGODB_HOST }}
+          MONGODB_USER: ${{ secrets.MONGODB_USER }}
+          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+          MONGODB_NAME : ${{ secrets. MONGODB_NAME  }}
