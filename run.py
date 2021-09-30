@@ -1,11 +1,15 @@
 import logging
+import math
 import os
 import pymongo
 import requests
-from time import sleep
-from tqdm import tqdm
+import time
+from datetime import datetime
+from multiprocessing import Pool
 
 URL = 'https://developers.onemap.sg/commonapi/search'
+MIN = 0
+MAX = 1000000
 
 
 def _get_uri():
@@ -24,6 +28,24 @@ def _get_uri():
     return f"mongodb+srv://{username}:{password}@{hostname}/{db_name}?retryWrites=true&w=majority"
 
 
+def _round_to_hundreds(x):
+    return math.ceil(x / 100) * 100
+
+
+def _get_range():
+    size = MAX - MIN
+    runs = 2 * 28 * 24  # over 2 months, 28 days and 24 hours each
+    size_per_run = _round_to_hundreds(size / runs)
+
+    now = datetime.utcnow()
+    i = (now.month % 2) * (now.day % 28) * now.hour
+    return i * size_per_run, (i + 1) * size_per_run
+
+
+def _get_pool_size(rate):
+    return math.ceil(rate / 4)
+
+
 def _check_postal_code(code):
     payload = {
         'searchVal': code,
@@ -33,7 +55,11 @@ def _check_postal_code(code):
     }
     req = requests.get(URL, params=payload)
     req.raise_for_status()
-    return req.json()
+
+    time.sleep(0.1)
+    print('.', flush=True, end='', sep='')
+
+    return payload | req.json() | {'created_at': time.time()}
 
 
 if __name__ == '__main__':
@@ -43,15 +69,14 @@ if __name__ == '__main__':
     client = pymongo.MongoClient(_get_uri())
     db = client.raw
 
-    start = int(os.environ.get('START', 0))
-    end = int(os.environ.get('END', 1000000))
+    start, end = _get_range()
+    start = int(os.environ.get('START', start))
+    end = int(os.environ.get('END', end))
     logging.info('start=%s, end=%s', start, end)
 
-    for i in tqdm(range(start, end)):
-        postal_code = '{:06d}'.format(i)
-        logging.debug('query=%s', postal_code)
+    pool_size = _get_pool_size((end - start) / 60)
+    logging.info('pool_size=%s', pool_size)
 
-        response = _check_postal_code(postal_code)
-        res = db.codes.insert_one(response)
-        logging.debug('inserted_id=%s', res.inserted_id)
-        sleep(0.1)
+    with Pool(pool_size) as p:
+        responses = p.map(_check_postal_code, range(start, end))
+        db.codes.insert_many(responses)
