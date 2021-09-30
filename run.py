@@ -39,7 +39,8 @@ def _get_range():
 
     now = datetime.utcnow()
     i = (now.day % 28) * now.hour
-    return i * size_per_run, (i + 1) * size_per_run
+    i2 = (now.day % 28) * (now.hour + 1)
+    return i * size_per_run, i2 * size_per_run
 
 
 def _get_pool_size(rate):
