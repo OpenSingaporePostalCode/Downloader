@@ -8,7 +8,7 @@ on:
     - cron:  '1 * * * *'
   workflow_dispatch:
 jobs:
-  export:
+  retrieve:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
