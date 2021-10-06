@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     client = pymongo.MongoClient(_get_uri())
     db = client.raw
-    db.codes.deleteMany({'found': 0})
+    db.codes.delete_many({'found': 0})
 
     start, end = _get_range()
     start = int(os.environ.get('START', start))
@@ -83,6 +83,5 @@ if __name__ == '__main__':
         it = p.imap(_check_postal_code, range(start, end), chunksize=pool_size)
         for response in it:
             postal_code = response['searchVal']
-            db.inventory.deleteMany({'searchVal': postal_code})
+            db.inventory.delete_many({'searchVal': postal_code})
             db.codes.insert(response)
-            
