@@ -44,7 +44,7 @@ def _get_range():
 
 
 def _get_pool_size(rate):
-    return math.ceil(rate / 4)
+    return math.ceil(rate / 8)
 
 
 def _check_postal_code(code):
