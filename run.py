@@ -60,7 +60,7 @@ def _check_postal_code(code):
     time.sleep(0.1)
     print('.', flush=True, end='', sep='')
 
-    return payload | req.json() | {'created_at': time.time()}
+    return payload | req.json()
 
 
 if __name__ == '__main__':
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     logging.info('pool_size=%s', pool_size)
 
     with Pool(pool_size) as p:
-        it = p.imap(_check_postal_code, range(start, end), chunksize=pool_size)
+        it = p.imap(_check_postal_code, range(start, end))
         for response in it:
             postal_code = response['searchVal']
             db.inventory.delete_many({'searchVal': postal_code})
