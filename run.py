@@ -83,5 +83,5 @@ if __name__ == '__main__':
         it = p.imap(_check_postal_code, range(start, end))
         for response in it:
             postal_code = response['searchVal']
-            db.inventory.delete_many({'searchVal': postal_code})
+            db.codes.delete_many({'searchVal': postal_code})
             db.codes.insert(response)
