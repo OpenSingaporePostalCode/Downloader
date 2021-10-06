@@ -69,6 +69,7 @@ if __name__ == '__main__':
 
     client = pymongo.MongoClient(_get_uri())
     db = client.raw
+    db.codes.deleteMany({found: 0})
 
     start, end = _get_range()
     start = int(os.environ.get('START', start))
@@ -86,4 +87,4 @@ if __name__ == '__main__':
         db.inventory.deleteMany({searchVal: postal_code})
 
     db.codes.insert_many(responses)
-    db.inventory.deleteMany({found: 0})
+    
