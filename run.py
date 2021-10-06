@@ -50,7 +50,7 @@ def _get_pool_size(rate):
 def _check_postal_code(code):
     payload = {
         'searchVal': code,
-        'returnGeom': 'Y',
+        'returnGeom': 'N',
         'getAddrDetails': 'Y',
         'pageNum': 1
     }
@@ -80,4 +80,10 @@ if __name__ == '__main__':
 
     with Pool(pool_size) as p:
         responses = p.map(_check_postal_code, range(start, end))
-        db.codes.insert_many(responses)
+
+    postal_codes = [r['searchVal'] for r in responses]
+    for postal_code in postal_codes:
+        db.inventory.deleteMany({searchVal: postal_code})
+
+    db.codes.insert_many(responses)
+    db.inventory.deleteMany({found: 0})
