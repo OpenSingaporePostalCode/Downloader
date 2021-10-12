@@ -80,8 +80,8 @@ if __name__ == '__main__':
     logging.info('pool_size=%s', pool_size)
 
     with Pool(pool_size) as p:
-        it = p.imap(_check_postal_code, range(start, end))
-        for response in it:
-            postal_code = response['searchVal']
-            db.codes.delete_many({'searchVal': postal_code})
-            db.codes.insert(response)
+        responses = p.map(_check_postal_code, range(start, end))
+        db.codes.insert_many(responses)
+
+    for postal_code in range(start, end):
+        db.codes.delete_many({'searchVal': postal_code})
