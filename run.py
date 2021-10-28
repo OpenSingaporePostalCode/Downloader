@@ -18,10 +18,6 @@ def _get_uri():
     hostname = os.environ.get('MONGODB_HOST')
     db_name = os.environ.get('MONGODB_NAME')
 
-    logging.info('username=%s', username)
-    logging.info('hostname=%s', hostname)
-    logging.info('db_name=%s', db_name)
-
     if not username or not password or not hostname or not db_name:
         logging.error('incomplete mongodb config')
 
@@ -38,8 +34,8 @@ def _get_range():
     size_per_run = _round_to_hundreds(size / runs)
 
     now = datetime.utcnow()
-    i = ((now.day % 28) or 1) * now.hour
-    i2 = ((now.day % 28) or 1) * (now.hour + 1)
+    i = ((now.day % 28) + 1) * now.hour
+    i2 = ((now.day % 28) + 1) * (now.hour + 1)
     return i * size_per_run, i2 * size_per_run
 
 
@@ -83,6 +79,7 @@ if __name__ == '__main__':
         mongo_client = pymongo.MongoClient(_get_uri())
         raw = mongo_client.raw
         raw.codes.delete_many({'searchVal': postal_code})
+        print('-', flush=True, end='', sep='')
 
 
     with Pool(pool_size) as p:
