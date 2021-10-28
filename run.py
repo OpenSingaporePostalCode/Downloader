@@ -82,7 +82,7 @@ if __name__ == '__main__':
     def _delete_postal_code(postal_code):
         mongo_client = pymongo.MongoClient(_get_uri())
         raw = mongo_client.raw
-        raw.codes.delete_many({'searchVal': c})
+        raw.codes.delete_many({'searchVal': postal_code})
 
 
     with Pool(pool_size) as p:
