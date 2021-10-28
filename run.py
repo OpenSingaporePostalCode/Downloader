@@ -79,7 +79,13 @@ if __name__ == '__main__':
     pool_size = _get_pool_size((end - start) / 60)
     logging.info('pool_size=%s', pool_size)
 
+    def _delete_postal_code(postal_code):
+        mongo_client = pymongo.MongoClient(_get_uri())
+        raw = mongo_client.raw
+        raw.codes.delete_many({'searchVal': c})
+
+
     with Pool(pool_size) as p:
         responses = p.map(_check_postal_code, range(start, end))
-        p.map(lambda c: db.codes.delete_many({'searchVal': c}), range(start, end))
+        p.map(_delete_postal_code, range(start, end))
         db.codes.insert_many(responses)
