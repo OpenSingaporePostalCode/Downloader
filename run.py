@@ -81,7 +81,5 @@ if __name__ == '__main__':
 
     with Pool(pool_size) as p:
         responses = p.map(_check_postal_code, range(start, end))
+        p.map(lambda c: db.codes.delete_many({'searchVal': c}), range(start, end))
         db.codes.insert_many(responses)
-
-    for postal_code in range(start, end):
-        db.codes.delete_many({'searchVal': postal_code})
