@@ -38,8 +38,8 @@ def _get_range():
     size_per_run = _round_to_hundreds(size / runs)
 
     now = datetime.utcnow()
-    i = (now.day % 28) * now.hour
-    i2 = (now.day % 28) * (now.hour + 1)
+    i = ((now.day % 28) or 1) * now.hour
+    i2 = ((now.day % 28) or 1) * (now.hour + 1)
     return i * size_per_run, i2 * size_per_run
 
 
