@@ -59,6 +59,10 @@ def _check_postal_code(code):
     return payload | req.json()
 
 
+def _get_bulk_delete(codes):
+    return [pymongo.DeleteMany({'searchVal': postal_code}) for c in codes]
+
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s [%(levelname)s] %(name)s - %(message)s',
                         encoding='utf-8', level=logging.INFO)
@@ -75,14 +79,7 @@ if __name__ == '__main__':
     pool_size = _get_pool_size((end - start) / 60)
     logging.info('pool_size=%s', pool_size)
 
-    def _delete_postal_code(postal_code):
-        mongo_client = pymongo.MongoClient(_get_uri())
-        raw = mongo_client.raw
-        raw.codes.delete_many({'searchVal': postal_code})
-        print('-', flush=True, end='', sep='')
-
-
     with Pool(pool_size) as p:
         responses = p.map(_check_postal_code, range(start, end))
-        p.map(_delete_postal_code, range(start, end))
+        db.codes.bulk_write(_get_bulk_delete(range(start, end)))
         db.codes.insert_many(responses)
