@@ -60,7 +60,7 @@ def _check_postal_code(code):
 
 
 def _get_bulk_delete(codes):
-    return [pymongo.DeleteMany({'searchVal': postal_code}) for c in codes]
+    return [pymongo.DeleteMany({'searchVal': c}) for c in codes]
 
 
 if __name__ == '__main__':
