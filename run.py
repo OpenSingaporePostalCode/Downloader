@@ -83,3 +83,5 @@ if __name__ == '__main__':
         responses = p.map(_check_postal_code, range(start, end))
         db.codes.bulk_write(_get_bulk_delete(range(start, end)))
         db.codes.insert_many(responses)
+
+    logging.info('count=%s', db.codes.count())
