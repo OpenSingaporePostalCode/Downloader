@@ -84,4 +84,4 @@ if __name__ == '__main__':
         db.codes.bulk_write(_get_bulk_delete(range(start, end)))
         db.codes.insert_many(responses)
 
-    logging.info('count=%s', db.codes.count_documents())
+    logging.info('count=%s', db.codes.count_documents({}))
