@@ -30,7 +30,7 @@ def _round_to_hundreds(x):
 
 def _get_range():
     size = MAX - MIN
-    runs = 28 * 24  # over 28 days and 24 hours each
+    runs = 28 * 24 * 2  # over 28 days and 24 hours each over 2 months
     size_per_run = _round_to_hundreds(size / runs)
 
     now = datetime.utcnow()
