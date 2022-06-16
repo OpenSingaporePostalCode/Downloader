@@ -44,8 +44,10 @@ def _get_pool_size(rate):
 
 
 def _check_postal_code(code):
+    assert isinstance(code, int)
+
     payload = {
-        'searchVal': code,
+        'searchVal': '{:06d}'.format(code),
         'returnGeom': 'N',
         'getAddrDetails': 'Y',
         'pageNum': 1
